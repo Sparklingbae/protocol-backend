@@ -21,7 +21,10 @@ app.use(express.json());
 app.use('/api/account', accountRoutes);
 
 app.get('/', (req, res) => {
-  res.send('🔥 Protocol Backend dey run ooo!');
+  res.status(200).json({
+    status: 'success',
+    message: '🌍 Finable A system reborn. A standard redefined',
+  });
 });
 
 const PORT = process.env.PORT || 5000;
