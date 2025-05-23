@@ -8,6 +8,7 @@ import accountRoutes from './routes/accountRoutes';
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet());
 
 const limiter = rateLimit({
@@ -20,7 +21,7 @@ app.use(limiter);
 app.use(express.json());
 app.use('/api/account', accountRoutes);
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.status(200).json({
     status: 'success',
     message: '🌍 Finable A system reborn. A standard redefined',

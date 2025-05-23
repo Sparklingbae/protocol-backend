@@ -6,7 +6,7 @@ import { normalizePhoneNumber } from '../utils/normalizePhoneNumber';
 import { createCard } from './cardController';
 import { encrypt, decrypt } from '../utils/encryption';
 
-export const createAccount = async (req: Request, res: Response): Promise<void> => {
+export const createAccount = async (req: Request, res: Response): Promise<void> => { 
   try {
     const { firstName, surname, email, phoneNumber, dateOfBirth } = req.body;
 
@@ -46,20 +46,20 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
 
     // Prepare encrypted response
     const responsePayload: any = {
-      message: 'Account and virtual card created',
-      encrypted: {
-        phoneNumber: newAccount.phoneNumber,
-        dateOfBirth: newAccount.dateOfBirth,
-        cardNumber: newCard.cardNumber,
-        expiryDate: newCard.expiryDate,
-        cvv: newCard.cvv
-      },
-       account: {
-    fullName: `${newAccount.firstName} ${newAccount.surname}`, // or however you store name
+  message: 'Account and virtual card created',
+  account: {
+    fullName: `${newAccount.firstName} ${newAccount.surname}`,
     email: newAccount.email,
-    accountNumber: newAccount.accountNumber
+    accountNumber: newAccount.accountNumber,
+  },
+  encrypted: {
+    phoneNumber: newAccount.phoneNumber,
+    dateOfBirth: newAccount.dateOfBirth,
+    cardNumber: newCard.cardNumber,
+    expiryDate: newCard.expiryDate,
+    cvv: newCard.cvv,
   }
-    };
+};
 
     // Include decrypted data only in development/testing
     if (process.env.NODE_ENV !== 'production' && newCard._decrypted ) {
