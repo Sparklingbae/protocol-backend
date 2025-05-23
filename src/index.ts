@@ -21,11 +21,9 @@ app.use(limiter);
 app.use(express.json());
 app.use('/api/account', accountRoutes);
 
+app.use(express.static('public'));
 app.get('/', (_req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: '🌍 Finable A system reborn. A standard redefined',
-  });
+  res.sendFile('index.html', { root: 'public' });
 });
 
 const PORT = process.env.PORT || 5000;
