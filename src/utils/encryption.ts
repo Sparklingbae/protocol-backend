@@ -8,7 +8,7 @@ if (!ENCRYPTION_KEY) {
   throw new Error('Missing ENCRYPTION_KEY environment variable!');
 }
 
-const iv = Buffer.alloc(16, 0); // Initialization vector - use fixed for now or better generate random per encryption
+const iv = Buffer.alloc(16, 0); // Initialization vector
 const key = Buffer.from(ENCRYPTION_KEY, 'hex');
 
 export function encrypt(text: string): string {
