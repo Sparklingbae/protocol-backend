@@ -53,7 +53,12 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
         cardNumber: newCard.cardNumber,
         expiryDate: newCard.expiryDate,
         cvv: newCard.cvv
-      }
+      },
+       account: {
+    fullName: `${newAccount.firstName} ${newAccount.surname}`, // or however you store name
+    email: newAccount.email,
+    accountNumber: newAccount.accountNumber
+  }
     };
 
     // Include decrypted data only in development/testing
