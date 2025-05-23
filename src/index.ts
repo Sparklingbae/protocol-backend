@@ -1,4 +1,6 @@
 import express from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import accountRoutes from './routes/accountRoutes';
@@ -6,6 +8,15 @@ import accountRoutes from './routes/accountRoutes';
 dotenv.config();
 
 const app = express();
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
+
+app.use(limiter);
 app.use(express.json());
 app.use('/api/account', accountRoutes);
 

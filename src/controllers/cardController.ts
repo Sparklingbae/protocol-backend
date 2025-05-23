@@ -27,17 +27,18 @@ export async function createCard(accountId: string) {
   });
 
  // Return both encrypted and decrypted versions for testing
-  return {
-    accountId,
-    cardNumber: encryptedCardNumber,
-    expiryDate: encryptedExpiryDate,
-    cvv: encryptedCvv,
+ return {
+  accountId,
+  cardNumber: encryptedCardNumber,
+  expiryDate: encryptedExpiryDate,
+  cvv: encryptedCvv,
 
-    // Decrypted (for testing only)
+  ...(process.env.NODE_ENV !== 'production' && {
     _decrypted: {
       cardNumber,
       cvv,
       expiryDate,
-    },
-  };
+    }
+  }),
 }
+};

@@ -14,21 +14,18 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
     const encryptedPhone = encrypt(normalizedPhone);
     const encryptedDOB = encrypt(dateOfBirth);
 
-    // Check if email already exists
     const existing = await Account.findOne({ email });
     if (existing) {
       res.status(400).json({ message: 'Email don already register' });
       return;
     }
 
-    // Check if encrypted phone already exists
     const existingPhone = await Account.findOne({ phoneNumber: encryptedPhone });
     if (existingPhone) {
       res.status(400).json({ message: 'Phone number don already register' });
       return;
     }
 
-    // Generate unique account number
     let accountNumber = generateAccountNumber();
     let exists = await Account.findOne({ accountNumber });
     while (exists) {
@@ -36,7 +33,6 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       exists = await Account.findOne({ accountNumber });
     }
 
-    // Create the account with encrypted fields
     const newAccount = await Account.create({
       firstName,
       surname,
@@ -46,40 +42,38 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       accountNumber,
     });
 
-    // Create virtual card (encrypt inside createCard)
     const newCard = await createCard(newAccount._id.toString());
 
-    // Prepare decrypted card info for testing
-    const cardResponse = {
-  accountId: newCard.accountId,
-  cardNumber: newCard._decrypted.cardNumber,
-  expiryDate: newCard._decrypted.expiryDate,
-  cvv: newCard._decrypted.cvv,
-};
-
-   
-    // Decrypt sensitive account fields for testing
-    const accountResponse = {
-      ...newAccount.toObject(),
-      phoneNumber: decrypt(newAccount.phoneNumber),
-      dateOfBirth: decrypt(newAccount.dateOfBirth),
+    // Prepare encrypted response
+    const responsePayload: any = {
+      message: 'Account and virtual card created',
+      encrypted: {
+        phoneNumber: newAccount.phoneNumber,
+        dateOfBirth: newAccount.dateOfBirth,
+        cardNumber: newCard.cardNumber,
+        expiryDate: newCard.expiryDate,
+        cvv: newCard.cvv
+      }
     };
 
-    // Respond with decrypted info (only for testing purposes)
-    res.status(201).json({
-  message: 'Account and virtual card created',
-  encrypted: {
-    phoneNumber: newAccount.phoneNumber,
-    dateOfBirth: newAccount.dateOfBirth,
-    cardNumber: newCard.cardNumber,
-    expiryDate: newCard.expiryDate,
-    cvv: newCard.cvv
-  },
-  decrypted: {
-    account: accountResponse,
-    card: cardResponse,
-  }
-});
+    // Include decrypted data only in development/testing
+    if (process.env.NODE_ENV !== 'production' && newCard._decrypted ) {
+      responsePayload.decrypted = {
+        account: {
+          ...newAccount.toObject(),
+          phoneNumber: decrypt(newAccount.phoneNumber),
+          dateOfBirth: decrypt(newAccount.dateOfBirth),
+        },
+        card: {
+          accountId: newCard.accountId,
+          cardNumber: newCard._decrypted.cardNumber,
+          expiryDate: newCard._decrypted.expiryDate,
+          cvv: newCard._decrypted.cvv,
+        }
+      };
+    }
+
+    res.status(201).json(responsePayload);
 
   } catch (err) {
     console.error(err);
@@ -95,7 +89,7 @@ export const listAccounts = async (req: Request, res: Response): Promise<void> =
       accounts.map(async (account) => {
         const card = await Card.findOne({ accountId: account._id });
 
-        return {
+        const baseData: any = {
           accountNumber: account.accountNumber,
           fullName: `${account.firstName} ${account.surname}`,
           encrypted: {
@@ -106,15 +100,20 @@ export const listAccounts = async (req: Request, res: Response): Promise<void> =
             expiryDate: card?.expiryDate || null,
             cvv: card?.cvv || null,
           },
-          decrypted: {
+        };
+
+        if (process.env.NODE_ENV !== 'production') {
+          baseData.decrypted = {
             phoneNumber: decrypt(account.phoneNumber),
             dateOfBirth: decrypt(account.dateOfBirth),
             email: account.email,
             cardNumber: card ? decrypt(card.cardNumber) : null,
             expiryDate: card ? decrypt(card.expiryDate) : null,
-            cvv: card ? decrypt(card.cvv) : null, // ⚠️ Remove or obfuscate in production
-          },
-        };
+            cvv: card ? decrypt(card.cvv) : null,
+          };
+        }
+
+        return baseData;
       })
     );
 
@@ -139,7 +138,7 @@ export const decryptFields = (req: Request, res: Response): void => {
 
     res.status(200).json({ decrypted });
   } catch (error) {
-  const err = error as Error;
-  res.status(400).json({ message: 'Decryption don failed', error: err.message });
-}
+    const err = error as Error;
+    res.status(400).json({ message: 'Decryption don fail', error: err.message });
+  }
 };

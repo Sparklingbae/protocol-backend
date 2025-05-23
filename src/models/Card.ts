@@ -13,7 +13,7 @@ const CardSchema: Schema = new Schema(
   {
     accountId: { type: Schema.Types.ObjectId, ref: 'Account', required: true },
     cardNumber: { type: String, required: true, unique: true },
-    cvv: { type: String, required: true },
+    cvv: { type: String, required: true, unique: true },
     expiryDate: { type: String, required: true }, // format MM/YY
   },
   { timestamps: true }
