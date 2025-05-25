@@ -1,41 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Finable - System Reborn</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finable — A System Reborn</title>
   <style>
-    body {
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       background-color: #000;
       color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .message-box {
+      overflow: hidden;
       text-align: center;
-      max-width: 600px;
+      user-select: none;
+      flex-direction: column;
     }
 
+    /* Container */
+    .container {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 60px 40px 40px;
+      border-radius: 16px;
+      box-shadow:
+        0 0 20px rgba(0, 255, 0, 0.7),
+        inset 0 0 15px rgba(0, 255, 0, 0.2);
+      max-width: 700px;
+      width: 90vw;
+      animation: fadeIn 1.8s ease forwards;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Status */
     .status {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .message {
       font-size: 28px;
       font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+      margin-bottom: 12px;
+      text-shadow:
+        0 0 12px rgba(0, 255, 0, 0.8),
+        0 0 24px rgba(0, 255, 0, 0.6);
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+
+    /* Main message */
+    .message {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 40px;
+      line-height: 1.3;
+      text-shadow:
+        0 0 15px rgba(0, 255, 0, 0.9),
+        0 0 35px rgba(0, 255, 0, 0.7);
+      animation: pulseGlow 3s infinite ease-in-out 0.5s;
+    }
+
+    /* Button */
+    .btn {
+      font-size: 22px;
+      padding: 18px 48px;
+      border: 3px solid #00ff00;
+      border-radius: 12px;
+      background-color: transparent;
+      color: #00ff00;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: 700;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+      transition: all 0.3s ease;
+      animation: fadeIn 2.5s ease forwards 1.2s;
+      opacity: 0;
+      user-select: none;
+    }
+    .btn:hover, .btn:focus {
+      background-color: #00ff00;
+      color: #000;
+      box-shadow:
+        0 0 35px rgba(0, 255, 0, 1),
+        inset 0 0 20px rgba(0, 255, 0, 0.7);
+      outline: none;
+    }
+
+    /* Author credit */
+    .author {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #00ff00aa;
+      font-style: italic;
+      user-select: text;
+    }
+
+    /* Animations */
+    @keyframes pulseGlow {
+      0%, 100% {
+        text-shadow:
+          0 0 10px rgba(0, 255, 0, 0.7),
+          0 0 20px rgba(0, 255, 0, 0.5);
+      }
+      50% {
+        text-shadow:
+          0 0 25px rgba(0, 255, 0, 1),
+          0 0 50px rgba(0, 255, 0, 0.8);
+      }
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="message-box">
-    <div class="status">✅ Status: Success</div>
-    <div class="message">🌍 Finable — A system reborn. A standard redefined.</div>
+  <div class="container" role="main" aria-label="Finable System Reborn message">
+    <div class="status" aria-live="polite">✅ Status: Success</div>
+    <div class="message">🌍 Finable — A system reborn.<br />A standard redefined.</div>
+    <button class="btn" onclick="handleGetStarted()">Get Started</button>
+    <div class="author">Architect of Protocol - BLESSING ASUQUO</div>
   </div>
+
+  <script>
+    function handleGetStarted() {
+      alert('Welcome to Finable! Starting your journey...');
+    }
+  </script>
 </body>
 </html>
